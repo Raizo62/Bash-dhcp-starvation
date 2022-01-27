@@ -9,7 +9,7 @@ while true; do
    ifconfig eth0 down
 
    # We switch our MAC address for out interface
-   macchanger -a eth0 2>&1 | grep Faked
+   echo $(macchanger -a eth0)
 
    # We enable again our interface
    ifconfig eth0 up
