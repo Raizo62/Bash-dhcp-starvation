@@ -2,6 +2,8 @@
 
 if [[ -z $1 ]]; then
    interface='eth0'
+else
+   interface=$1
 fi
 
 while true; do
