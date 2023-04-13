@@ -15,7 +15,7 @@ while true; do
       ifconfig $interface down
 
       # We switch our MAC address for out interface
-      echo $(macchanger -a $interface)
+      macchanger -a $interface | grep '^New MAC:'
 
       # We enable again our interface
       ifconfig $interface up
