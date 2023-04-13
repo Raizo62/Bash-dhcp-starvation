@@ -8,6 +8,9 @@ fi
 
 PIDFile="/tmp/dhcp-starvation.dhclient.${interface}.pid"
 LEASEFile="/tmp/dhcp-starvation.dhclient.${interface}.lease"
+CONFIGFile="/tmp/dhcp-starvation.dhclient.conf"
+
+echo 'initial-interval 1;' > "${CONFIGFile}"
 
 rm -f "${PIDFile}"
 
@@ -28,5 +31,5 @@ while true; do
       #ifconfig "${interface}" up
 
       # We get a new DHCP Lease
-      dhclient -v "${interface}" -pf "${PIDFile}" -lf "${LEASEFile}" 2>&1 | grep DHCPACK
+      dhclient -v "${interface}" -pf "${PIDFile}" -lf "${LEASEFile}" -cf "${CONFIGFile}" 2>&1 | grep DHCPACK
 done
