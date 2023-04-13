@@ -23,6 +23,9 @@ while true; do
       ip link set "${interface}" down
       #ifconfig "${interface}" down
 
+      ip add flush "${interface}"
+      #ifconfig "${interface}" 0.0.0.0
+
       # We switch our MAC address for out interface
       macchanger -a "${interface}" | grep '^New MAC:'
 
