@@ -21,5 +21,5 @@ while true; do
       ifconfig $interface up
 
       # We get a new DHCP Lease
-      dhclient $interface 2>&1 | grep DHCPACK
+      dhclient -v $interface 2>&1 | grep DHCPACK
 done
