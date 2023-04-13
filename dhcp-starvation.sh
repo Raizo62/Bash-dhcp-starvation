@@ -22,5 +22,4 @@ while true; do
 
       # We get a new DHCP Lease
       dhclient $interface 2>&1 | grep DHCPACK
-   done
-fi
+done
