@@ -6,10 +6,14 @@ else
    interface=$1
 fi
 
+PIDFile="/tmp/dhcp-starvation.dhclient.${interface}.pid"
+
+rm -f "${PIDFile}"
+
 while true; do
       # We kill every dhclient process
-      killall dhclient
-      rm -f /var/run/dhclient.pid
+      [ -e "${PIDFile}" ] && kill -9 $(cat "${PIDFile}")
+      rm -f "${PIDFile}"
 
       # We disable our interface
       ip link set "${interface}" down
@@ -23,5 +27,5 @@ while true; do
       #ifconfig "${interface}" up
 
       # We get a new DHCP Lease
-      dhclient -v "${interface}" 2>&1 | grep DHCPACK
+      dhclient -v "${interface}" -pf "${PIDFile}" 2>&1 | grep DHCPACK
 done
