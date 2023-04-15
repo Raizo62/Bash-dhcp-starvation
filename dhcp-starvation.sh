@@ -16,7 +16,14 @@ rm -f "${PIDFile}"
 
 while true; do
       # We kill every dhclient process
-      [ -e "${PIDFile}" ] && kill -9 $(cat "${PIDFile}")
+      if [ -e "${PIDFile}" ]
+      then
+         PID=$(cat "${PIDFile}")
+         kill "${PID}"
+         while kill -0 "${PID}" 2>/dev/null; do
+            sleep 1
+         done
+      fi
       rm -f "${PIDFile}" "${LEASEFile}"
 
       # We disable our interface
@@ -35,4 +42,6 @@ while true; do
 
       # We get a new DHCP Lease
       dhclient -v "${interface}" -pf "${PIDFile}" -lf "${LEASEFile}" -cf "${CONFIGFile}" 2>&1 | grep DHCPACK
+
+      sleep 1s
 done
