@@ -42,7 +42,7 @@ EOF
 
 rm -f "${PIDFile}"
 
-NumberAddress=1
+NumberAddress=0
 NumberStolenIP=0
 
 while true; do
@@ -64,7 +64,7 @@ while true; do
       ip add flush "${interface}"
       #ifconfig "${interface}" 0.0.0.0
 
-      echo -n "$((NumberAddress++))] "
+      echo -n "$((++NumberAddress))] "
       # We switch our MAC address for out interface
       macchanger -a "${interface}" | grep '^New MAC:'
 
