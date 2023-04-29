@@ -29,11 +29,14 @@ then
       exit 3
 fi
 
+LEASETime=172800 # 2 days = 172800s
+
 PIDFile="/tmp/dhcp-starvation.dhclient.${interface}.pid"
 LEASEFile="/tmp/dhcp-starvation.dhclient.${interface}.lease"
 CONFIGFile="/tmp/dhcp-starvation.dhclient.conf"
 
 echo 'initial-interval 1;' > "${CONFIGFile}"
+echo "send dhcp-lease-time ${LEASETime};" >> "${CONFIGFile}"
 
 rm -f "${PIDFile}"
 
