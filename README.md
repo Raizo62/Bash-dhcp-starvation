@@ -8,4 +8,4 @@ This project requires the `macchanger` package that you can install with `sudo a
 
 Run `cd Bash-dhcp-starvation && chmod u+x dhcp-starvation.sh && sudo ./dhcp-starvation.sh` and the attack will start with the default interface "eth0".
 
-Or run the script and tell what interface you want to run the attack with. I.E: `./dhcp-starvation.sh enp0s3`
+Or run the script and tell what interface you want to run the attack with. I.E: `sudo ./dhcp-starvation.sh enp0s3`
