@@ -35,8 +35,10 @@ PIDFile="/tmp/dhcp-starvation.dhclient.${interface}.pid"
 LEASEFile="/tmp/dhcp-starvation.dhclient.${interface}.lease"
 CONFIGFile="/tmp/dhcp-starvation.dhclient.conf"
 
-echo 'initial-interval 1;' > "${CONFIGFile}"
-echo "send dhcp-lease-time ${LEASETime};" >> "${CONFIGFile}"
+cat > "${CONFIGFile}" <<EOF
+initial-interval 1;
+send dhcp-lease-time ${LEASETime};
+EOF
 
 rm -f "${PIDFile}"
 
