@@ -23,6 +23,12 @@ then
       exit 2
 fi
 
+if (( EUID ))
+then
+      echo "ERROR : This program must be run with the root rights"
+      exit 3
+fi
+
 PIDFile="/tmp/dhcp-starvation.dhclient.${interface}.pid"
 LEASEFile="/tmp/dhcp-starvation.dhclient.${interface}.lease"
 CONFIGFile="/tmp/dhcp-starvation.dhclient.conf"
