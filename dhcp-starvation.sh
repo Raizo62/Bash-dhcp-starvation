@@ -16,6 +16,13 @@ then
 
       exit 1
 fi
+
+if [ -z $(which macchanger) ]
+then
+      echo "ERROR : The tool 'macchanger' is not installed"
+      exit 2
+fi
+
 PIDFile="/tmp/dhcp-starvation.dhclient.${interface}.pid"
 LEASEFile="/tmp/dhcp-starvation.dhclient.${interface}.lease"
 CONFIGFile="/tmp/dhcp-starvation.dhclient.conf"
