@@ -6,6 +6,16 @@ else
    interface=$1
 fi
 
+if [ ! -L "/sys/class/net/${interface}" ]
+then
+      echo "ERROR : Unknown network interface : ${interface}"
+
+      echo -n "         network interfaces : "
+      find /sys/class/net/ -maxdepth 1 -type l -printf '%f '
+      echo
+
+      exit 1
+fi
 PIDFile="/tmp/dhcp-starvation.dhclient.${interface}.pid"
 LEASEFile="/tmp/dhcp-starvation.dhclient.${interface}.lease"
 CONFIGFile="/tmp/dhcp-starvation.dhclient.conf"
