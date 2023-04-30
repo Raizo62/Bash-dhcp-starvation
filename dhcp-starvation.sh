@@ -17,11 +17,14 @@ then
 	exit 1
 fi
 
-if [ -z $(which macchanger) ]
-then
-	echo "ERROR : The tool 'macchanger' is not installed"
-	exit 2
-fi
+for tool in macchanger dhclient
+do
+	if [ -z "$(which ${tool})" ]
+	then
+		echo "ERROR : The tool '${tool}' is not installed"
+		exit 2
+	fi
+done
 
 if (( EUID ))
 then
